@@ -60,7 +60,7 @@ public class Datanode implements api.storage.Datanode {
 	public byte[] readBlock(String block) {
 		byte[] data = null;
 		try {
-			data = Files.readAllBytes(new File("block").toPath());
+			data = Files.readAllBytes(new File(block).toPath());
 		} catch (IOException e) {
 			System.out.println("Error reading");
 		}
