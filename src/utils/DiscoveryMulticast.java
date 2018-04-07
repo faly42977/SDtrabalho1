@@ -15,27 +15,27 @@ public class DiscoveryMulticast {
 	public DiscoveryMulticast () throws UnknownHostException {
 		group =  InetAddress.getByName("226.226.226.226") ;	
 	}
-	
-	public void listen(String service, int port) throws IOException {
-		while(true) {
+
+	public void listen(String service, int port, String path) throws IOException {
+		MulticastSocket clientSocket = new MulticastSocket(3333);
+		clientSocket.joinGroup(group);
+
+		while (true) {
 			byte[] requestData = new byte[32];
-			MulticastSocket socket = new MulticastSocket();
-			DatagramPacket request = new DatagramPacket( requestData, requestData.length, group, 3333 ) ;
-			socket.receive(request);
-			socket.close();
-			SocketAddress address = request.getSocketAddress();
-			if (String.valueOf(request.getData()).compareTo(service) == 0) {
+			DatagramPacket msgPacket = new DatagramPacket(requestData, requestData.length);
+			clientSocket.receive(msgPacket);
+			if (String.valueOf(msgPacket.getData()).compareTo(service) == 0) {
 				String host = Inet4Address.getLocalHost().getHostAddress();
-				host += ":" + port;
+				//host += ":" + port + path;
+				host += path;
 				byte[] responseData = host.getBytes();
 				DatagramPacket response = new DatagramPacket( responseData, responseData.length, 3333 ) ;
-				DatagramSocket uniSocket = new DatagramSocket(address);
+				DatagramSocket uniSocket = new DatagramSocket(msgPacket.getSocketAddress());
 				uniSocket.send(response);
 				uniSocket.close();
-			
 			}
-				
 		}
+
 	}
 
 
@@ -47,11 +47,12 @@ public class DiscoveryMulticast {
 
 		byte[] requestData = query.getBytes();
 		byte[] responseData = new byte[32];
-			
-		try(MulticastSocket multisocket = new MulticastSocket()) {
+
+		try(DatagramSocket socket = new DatagramSocket(3333, group)) {
 			DatagramPacket request = new DatagramPacket( requestData, requestData.length, group, 3333 ) ;
-			multisocket.send( request ) ;    
-			multisocket.close();
+			socket.send( request ) ;    
+			socket.close();
+			
 			DatagramPacket response = new DatagramPacket( responseData, responseData.length, group, 3333 ) ;
 			DatagramSocket uniSocket = new DatagramSocket(3333);
 			uniSocket.receive(response);
@@ -59,8 +60,8 @@ public class DiscoveryMulticast {
 			return String.valueOf(response.getData()).trim();
 		}
 	}
-	
-	
+
+
 
 
 
