@@ -9,6 +9,7 @@ import org.glassfish.jersey.jdkhttp.*;
 public class MainServer {
 
 	public static void main(String[] args) {
+	/*
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
@@ -33,6 +34,7 @@ public class MainServer {
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE2), config2);
 		
 		System.err.println("Server ready....");
+		*/
 	}
 
 }

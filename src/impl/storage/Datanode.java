@@ -3,6 +3,8 @@ package impl.storage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,29 +16,25 @@ public class Datanode implements api.storage.Datanode {
 
 	private static final int INITIAL_SIZE = 32;
 	private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
-	private Map<String, File> files = new HashMap<>(INITIAL_SIZE);
+	private String path;
+	
+	
+	public Datanode(String uri) {
+		path = uri + "datanode";
+	}
 	
 	@Override
 	public String createBlock(byte[] data) {
 		String id = Random.key64();
 		blocks.put( id, data);
-		try {
-			FileOutputStream f = new FileOutputStream("./" + id);
-			f.write(data);
-			f.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return id;
+		String r = path + "/" + id;
+		return r;
 	}
 
 	@Override
 	public void deleteBlock(String block) {
-		
-		//files.remove(block);
-		File f = new File("./" + block);
-		System.out.println(f.exists());
-		
+		System.out.println("delete: " + block);
+		blocks.remove(block);
 	}
 
 	@Override

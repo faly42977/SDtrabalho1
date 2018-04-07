@@ -1,4 +1,4 @@
-package sys.storage.rest.namenode;
+package sys.storage.rest.datanode;
 
 import java.net.Inet4Address;
 import java.net.URI;
@@ -24,7 +24,7 @@ public class DatanodeServer {
 		String URI_BASE = "http://" + host + ":9999/";
 
 		ResourceConfig config = new ResourceConfig();
-		config.register( new Datanode());
+		config.register( new Datanode(URI_BASE));
 
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
 	}
