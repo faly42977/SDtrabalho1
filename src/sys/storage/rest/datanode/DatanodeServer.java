@@ -16,7 +16,7 @@ public class DatanodeServer {
 	private final static int PORT = 9999;
 	private final static String SERVICE = "Datanode";
 	public static void main(String[] args) throws UnknownHostException {
-		System.setProperty("java.net.preferIPv4Stack", "true");
+	
 		DiscoveryMulticast multicast = new DiscoveryMulticast();
 		new Thread (() ->{
 			try {
@@ -25,7 +25,7 @@ public class DatanodeServer {
 				System.out.println("ERROR ");
 				e.printStackTrace();
 			}
-		});
+		}).run();
 		
 		String host;
 		try {

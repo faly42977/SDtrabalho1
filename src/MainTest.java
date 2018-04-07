@@ -1,14 +1,22 @@
+import java.io.IOException;
 import java.net.*;
 import org.glassfish.jersey.server.*;
 
 import impl.storage.Datanode;
 import impl.storage.Namenode;
+import utils.DiscoveryMulticast;
 
 import org.glassfish.jersey.jdkhttp.*;
 
-public class MainServer {
+public class MainTest {
 
-	public static void main(String[] args) {
+	
+	
+	public static void main(String[] args) throws IOException {
+	
+	DiscoveryMulticast d = new DiscoveryMulticast();
+	System.out.println(d.discover("Namenode"));
+	
 	/*
 		String host;
 		try {

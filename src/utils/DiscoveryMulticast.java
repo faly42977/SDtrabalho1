@@ -10,29 +10,47 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 public class DiscoveryMulticast {
+
 	final InetAddress group;
 
 	public DiscoveryMulticast () throws UnknownHostException {
+		//System.setProperty("java.net.preferIPv4Stack", "true");
 		group =  InetAddress.getByName("226.226.226.226") ;	
 	}
 
 	public void listen(String service, int port, String path) throws IOException {
+		System.out.println("STARTED");
 		MulticastSocket clientSocket = new MulticastSocket(3333);
 		clientSocket.joinGroup(group);
 
 		while (true) {
-			byte[] requestData = new byte[32];
+			byte[] requestData = new byte[100];
 			DatagramPacket msgPacket = new DatagramPacket(requestData, requestData.length);
+			System.out.println("multi remote" + clientSocket.getRemoteSocketAddress());
+			System.out.println("multi local" + clientSocket.getLocalSocketAddress());
 			clientSocket.receive(msgPacket);
-			if (String.valueOf(msgPacket.getData()).compareTo(service) == 0) {
-				String host = Inet4Address.getLocalHost().getHostAddress();
-				//host += ":" + port + path;
-				host += path;
+			String asking = new String (msgPacket.getData());
+			System.out.println("asked: " + asking);
+			System.out.println("my service:" + service);
+			System.out.println(asking.trim().equals(service.trim()));
+			if (asking.trim().equals(service.trim())) {
+				System.out.println("aaa");
+				String host =
+					"http://" 
+					+ Inet4Address.getLocalHost().getHostAddress()
+					+ ":" + port + path;
+				//host += path;
 				byte[] responseData = host.getBytes();
-				DatagramPacket response = new DatagramPacket( responseData, responseData.length, 3333 ) ;
-				DatagramSocket uniSocket = new DatagramSocket(msgPacket.getSocketAddress());
+				System.out.println("my response " + host);
+				DatagramPacket response = new DatagramPacket(responseData, responseData.length,msgPacket.getSocketAddress()) ;
+
+				System.out.println("source "+ msgPacket.getSocketAddress());
+
+				DatagramSocket uniSocket = new DatagramSocket();
+			
 				uniSocket.send(response);
 				uniSocket.close();
+			
 			}
 		}
 
@@ -52,7 +70,7 @@ public class DiscoveryMulticast {
 			DatagramPacket request = new DatagramPacket( requestData, requestData.length, group, 3333 ) ;
 			socket.send( request ) ;    
 			socket.close();
-			
+
 			DatagramPacket response = new DatagramPacket( responseData, responseData.length, group, 3333 ) ;
 			DatagramSocket uniSocket = new DatagramSocket(3333);
 			uniSocket.receive(response);

@@ -16,7 +16,7 @@ public class NamenodeServer {
 	private static final int PORT = 7777;
 	private static final String SERVICE = "Namenode";
 	public static void main(String[] args) throws UnknownHostException {
-		System.setProperty("java.net.preferIPv4Stack", "true");
+		
 		DiscoveryMulticast multicast = new DiscoveryMulticast();
 		new Thread (() ->{
 			try {
@@ -25,7 +25,7 @@ public class NamenodeServer {
 				System.out.println("ERROR ");
 				e.printStackTrace();
 			}
-		});
+		}).run();;
 		
 		String host;
 		try {
