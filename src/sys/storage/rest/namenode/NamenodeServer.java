@@ -1,5 +1,6 @@
 package sys.storage.rest.namenode;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -8,9 +9,23 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import impl.storage.Namenode;
+import utils.DiscoveryMulticast;
 
 public class NamenodeServer {
-	public static void main(String[] args) {
+	private static final int PORT = 7777;
+	private static final String SERVICE = "namenode";
+	public static void main(String[] args) throws UnknownHostException {
+		
+		DiscoveryMulticast multicast = new DiscoveryMulticast();
+		new Thread (() ->{
+			try {
+				multicast.listen(SERVICE, PORT);
+			} catch (IOException e) {
+				System.out.println("ERROR ");
+				e.printStackTrace();
+			}
+		});
+		
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
@@ -20,7 +35,7 @@ public class NamenodeServer {
 			return;
 		}
 		
-		String URI_BASE = "http://" + host + ":7777/";
+		String URI_BASE = "http://" + host + ":" + PORT +"/";
 
 		ResourceConfig config = new ResourceConfig();
 		config.register( new Namenode());

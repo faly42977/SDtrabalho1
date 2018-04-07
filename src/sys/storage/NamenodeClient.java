@@ -1,6 +1,9 @@
 package sys.storage;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,6 +21,7 @@ import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.glassfish.jersey.client.ClientConfig;
 
 import api.storage.Namenode;
+import utils.DiscoveryMulticast;
 
 /*
  * Fake NamenodeClient client.
@@ -29,41 +33,63 @@ import api.storage.Namenode;
  */
 public class NamenodeClient implements Namenode {
 
+
+
+
 	ClientConfig config = new ClientConfig();
 	Client client = ClientBuilder.newClient(config);
-	URI baseURI = UriBuilder.fromUri("http://127.0.1.1:9999").build();
+	URI baseURI;
 	WebTarget target = client.target( baseURI );
-	
+	DiscoveryMulticast multicast;
+
+	public NamenodeClient () {
+		try {
+			multicast = new DiscoveryMulticast();
+		} catch (UnknownHostException e1) {
+			System.out.println("ERROR1");
+			e1.printStackTrace();
+		}
+		try {
+			this.baseURI = new URI(multicast.discover("namenodeserver"));
+		} catch (URISyntaxException e) {
+			System.out.println("ERROR2");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("ERROR3");
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public List<String> list(String prefix) {
 		Response response = target.path(Namenode.PATH + "/list/")
-			    .queryParam("prefix", prefix)
+				.queryParam("prefix", prefix)
 				.request()
-			    .get();
-			        
-			if( response.hasEntity() ) {
-			    List<String> data = response.readEntity(List.class);
-			    return data;
-			} else {
-			    System.err.println( response.getStatus() );
-			    return null;
-			}
+				.get();
+
+		if( response.hasEntity() ) {
+			List<String> data = response.readEntity(List.class);
+			return data;
+		} else {
+			System.err.println( response.getStatus() );
+			return null;
+		}
 	}
 
 	@Override
 	public void create(String name,  List<String> blocks) {
 		Response response = target.path(Namenode.PATH + "/" + name)
-			    .request()
-			    .post(Entity.entity( blocks, MediaType.APPLICATION_JSON));
+				.request()
+				.post(Entity.entity( blocks, MediaType.APPLICATION_JSON));
 		System.out.println("create" + name + String.valueOf(response.getStatus()));
 	}
 
 	@Override
 	public void delete(String prefix) {
 		Response response = target.path(Namenode.PATH + "/list/")
-			    .queryParam("prefix", prefix)
+				.queryParam("prefix", prefix)
 				.request()
-			    .delete();
+				.delete();
 		System.out.println("delete");
 		System.out.println(response.getStatus());
 	}
@@ -72,7 +98,7 @@ public class NamenodeClient implements Namenode {
 	public void update(String name, List<String> blocks) {
 		Response response = target.path(Namenode.PATH + "/" + name)
 				.request()
-			    .put(Entity.entity(blocks, MediaType.APPLICATION_JSON));
+				.put(Entity.entity(blocks, MediaType.APPLICATION_JSON));
 		System.out.println("update");
 		System.out.println(response.getStatus());
 	}
@@ -81,14 +107,14 @@ public class NamenodeClient implements Namenode {
 	public List<String> read(String name) {
 		Response response = target.path(Namenode.PATH + "/" + name)
 				.request()
-			    .get();
+				.get();
 		System.out.println("read");
 		System.err.println( response.getStatus() );
 		if( response.hasEntity() ) {
-		    List<String> data = response.readEntity(List.class);
-		    return data;
+			List<String> data = response.readEntity(List.class);
+			return data;
 		} else
-		    return null;
+			return null;
 	}
 
 }

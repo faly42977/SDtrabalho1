@@ -1,6 +1,9 @@
 package sys.storage;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -19,15 +22,36 @@ import org.glassfish.jersey.client.ClientConfig;
 
 import api.storage.Datanode;
 import api.storage.Namenode;
+import utils.DiscoveryMulticast;
 import utils.Random;
 
 public class DatanodeClient implements Datanode {
 	private static Logger logger = Logger.getLogger(Datanode.class.toString() );
-	
 	ClientConfig config = new ClientConfig();
 	Client client = ClientBuilder.newClient(config);
-	URI baseURI = UriBuilder.fromUri("http://127.0.1.1:9998").build();
+	URI baseURI;
 	WebTarget target = client.target( baseURI );
+	DiscoveryMulticast multicast;
+	
+	public DatanodeClient () {
+		try {
+			multicast = new DiscoveryMulticast();
+		} catch (UnknownHostException e1) {
+			System.out.println("ERROR1");
+			e1.printStackTrace();
+		}
+		try {
+			this.baseURI = new URI(multicast.discover("datanodeserver"));
+		} catch (URISyntaxException e) {
+			System.out.println("ERROR2");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("ERROR3");
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	@Override
 	public String createBlock(byte[] data) {

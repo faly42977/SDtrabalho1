@@ -1,5 +1,6 @@
 package sys.storage.rest.datanode;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -8,10 +9,23 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import impl.storage.Datanode;
+import utils.DiscoveryMulticast;
 
 
 public class DatanodeServer {
-	public static void main(String[] args) {
+	private final static int PORT = 9999;
+	private final static String SERVICE = "datanodeserver";
+	public static void main(String[] args) throws UnknownHostException {
+		DiscoveryMulticast multicast = new DiscoveryMulticast();
+		new Thread (() ->{
+			try {
+				multicast.listen(SERVICE, PORT);
+			} catch (IOException e) {
+				System.out.println("ERROR ");
+				e.printStackTrace();
+			}
+		});
+		
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
