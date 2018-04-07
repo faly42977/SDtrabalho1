@@ -14,7 +14,7 @@ import utils.DiscoveryMulticast;
 
 public class DatanodeServer {
 	private final static int PORT = 9999;
-	private final static String SERVICE = "datanodeserver";
+	private final static String SERVICE = "Datanode";
 	public static void main(String[] args) throws UnknownHostException {
 		DiscoveryMulticast multicast = new DiscoveryMulticast();
 		new Thread (() ->{

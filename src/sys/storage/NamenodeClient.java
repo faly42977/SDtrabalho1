@@ -50,7 +50,7 @@ public class NamenodeClient implements Namenode {
 			e1.printStackTrace();
 		}
 		try {
-			this.baseURI = new URI(multicast.discover("namenodeserver"));
+			this.baseURI = new URI(multicast.discover("Namenode"));
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
 			e.printStackTrace();

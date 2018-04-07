@@ -41,7 +41,7 @@ public class DatanodeClient implements Datanode {
 			e1.printStackTrace();
 		}
 		try {
-			this.baseURI = new URI(multicast.discover("datanodeserver"));
+			this.baseURI = new URI(multicast.discover("Datanode"));
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
 			e.printStackTrace();

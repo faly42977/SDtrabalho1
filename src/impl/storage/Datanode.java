@@ -21,7 +21,7 @@ public class Datanode implements api.storage.Datanode {
 
 
 	private static final int INITIAL_SIZE = 32;
-	private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
+	//private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
 	private String path;
 
 
@@ -32,7 +32,7 @@ public class Datanode implements api.storage.Datanode {
 	@Override
 	public String createBlock(byte[] data) {
 		String id = Random.key64();
-		blocks.put( id, data);
+		//blocks.put( id, data);
 		
 			try {
 				FileOutputStream fos = new FileOutputStream(id) ;
@@ -51,7 +51,7 @@ public class Datanode implements api.storage.Datanode {
 	@Override
 	public void deleteBlock(String block) {
 		System.out.println("delete: " + block);
-		blocks.remove(block);
+		//blocks.remove(block);
 		File file = new File(block);
 		file.delete();
 	}

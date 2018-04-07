@@ -13,7 +13,7 @@ import utils.DiscoveryMulticast;
 
 public class NamenodeServer {
 	private static final int PORT = 7777;
-	private static final String SERVICE = "namenode";
+	private static final String SERVICE = "Namenode";
 	public static void main(String[] args) throws UnknownHostException {
 		
 		DiscoveryMulticast multicast = new DiscoveryMulticast();
