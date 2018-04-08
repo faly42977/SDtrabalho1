@@ -64,27 +64,27 @@ public class DiscoveryMulticast {
 		}
 		System.out.println(query);
 		byte[] requestData = query.getBytes();
-
-		MulticastSocket socket = new MulticastSocket(3333);
-		socket.joinGroup(group);
-		DatagramPacket request = new DatagramPacket(requestData, requestData.length, Inet4Address.getLocalHost(),12345);
-		socket.send( request ) ;
+		try(MulticastSocket socket = new MulticastSocket(3333)) {
+			socket.joinGroup(group);
+		    DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
+		    System.out.println(request);
+		    System.out.println("connected: " + socket.isConnected());
+		    socket.send( request ) ;
+		
 		System.out.println("sending : " + query);
-		socket.close();
+		
 		
 		byte[] reply = new byte[100];
 		DatagramPacket response = new DatagramPacket( reply,reply.length) ;
-		DatagramSocket uniSocket = new DatagramSocket(12345);
+		DatagramSocket uniSocket = new DatagramSocket(socket.getLocalPort());
 		uniSocket.receive(response);
+		
 		System.out.println("Recieved: " + String.valueOf(response.getData()));
 		uniSocket.close();
 		return String.valueOf(response.getData()).trim();
+		}
+		
 
 	}
-
-
-
-
-
 
 }
