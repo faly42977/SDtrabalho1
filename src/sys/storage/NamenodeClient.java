@@ -47,7 +47,7 @@ public class NamenodeClient implements Namenode {
 		try {
 			multicast = new DiscoveryMulticast();
 			this.baseURI = new URI(multicast.discover("Namenode"));
-			System.out.println("baseURI: " + baseURI.getPath());
+			System.out.println("baseURI: " + baseURI.toString());
 			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");

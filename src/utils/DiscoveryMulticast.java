@@ -49,7 +49,7 @@ public class DiscoveryMulticast {
 				DatagramSocket uniSocket = new DatagramSocket();
 
 				uniSocket.send(response);
-				uniSocket.close();
+				//uniSocket.close();
 
 			}
 		}
@@ -64,26 +64,26 @@ public class DiscoveryMulticast {
 		}
 		System.out.println(query);
 		byte[] requestData = query.getBytes();
-		try(MulticastSocket socket = new MulticastSocket(3333)) {
-			socket.joinGroup(group);
-		    DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
-		    System.out.println(request);
-		    System.out.println("connected: " + socket.isConnected());
-		    socket.send( request ) ;
-		
-		System.out.println("sending : " + query);
-		
-		
-		byte[] reply = new byte[100];
-		DatagramPacket response = new DatagramPacket( reply,reply.length) ;
-		DatagramSocket uniSocket = new DatagramSocket(socket.getLocalPort());
-		uniSocket.receive(response);
-		
-		System.out.println("Recieved: " + String.valueOf(response.getData()));
-		uniSocket.close();
-		return String.valueOf(response.getData()).trim();
+		try(DatagramSocket socket = new DatagramSocket()) {
+			DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
+			System.out.println(request);
+			System.out.println("connected: " + socket.isConnected());
+			socket.send( request ) ;
+			System.out.println("sending : " + query);
+
+
+			byte[] reply = new byte[100];
+			DatagramPacket response = new DatagramPacket( reply,reply.length) ;
+
+
+			socket.receive(response);
+
+			System.out.println("Port: " + String.valueOf(response.getPort()));
+			System.out.println("Response: " + new String(response.getData()).trim());
+			//socket.close();
+			return new String(response.getData()).trim();
 		}
-		
+
 
 	}
 

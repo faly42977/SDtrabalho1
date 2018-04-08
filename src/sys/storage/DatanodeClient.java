@@ -39,7 +39,7 @@ public class DatanodeClient implements Datanode {
 		try {
 			multicast = new DiscoveryMulticast();
 			this.baseURI = new URI(multicast.discover("Datanode"));
-			System.out.println("baseURI: " + baseURI.getPath());
+			System.out.println("baseURI: " + baseURI.toString());
 			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
