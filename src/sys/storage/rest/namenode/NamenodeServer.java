@@ -18,14 +18,7 @@ public class NamenodeServer {
 	public static void main(String[] args) throws UnknownHostException {
 		
 		DiscoveryMulticast multicast = new DiscoveryMulticast();
-		new Thread (() ->{
-			try {
-				multicast.listen(SERVICE, PORT, Namenode.PATH);
-			} catch (IOException e) {
-				System.out.println("ERROR ");
-				e.printStackTrace();
-			}
-		}).run();;
+		
 		
 		String host;
 		try {
@@ -42,5 +35,15 @@ public class NamenodeServer {
 		config.register( new Namenode());
 
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
+		System.out.println("URI " + URI_BASE);
+		
+		new Thread (() ->{
+			try {
+				multicast.listen(SERVICE, PORT, Namenode.PATH);
+			} catch (IOException e) {
+				System.out.println("ERROR ");
+				e.printStackTrace();
+			}
+		}).run();;
 	}
 }

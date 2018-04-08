@@ -17,15 +17,6 @@ public class DatanodeServer {
 	private final static String SERVICE = "Datanode";
 	public static void main(String[] args) throws UnknownHostException {
 	
-		DiscoveryMulticast multicast = new DiscoveryMulticast();
-		new Thread (() ->{
-			try {
-				multicast.listen(SERVICE, PORT, Datanode.PATH);
-			} catch (IOException e) {
-				System.out.println("ERROR ");
-				e.printStackTrace();
-			}
-		}).run();
 		
 		String host;
 		try {
@@ -42,5 +33,17 @@ public class DatanodeServer {
 		config.register( new Datanode(URI_BASE));
 
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
+		System.out.println("URI " + URI_BASE);
+		
+		DiscoveryMulticast multicast = new DiscoveryMulticast();
+		new Thread (() ->{
+			try {
+				multicast.listen(SERVICE, PORT, Datanode.PATH);
+			} catch (IOException e) {
+				System.out.println("ERROR ");
+				e.printStackTrace();
+			}
+		}).run();
+		
 	}
 }
