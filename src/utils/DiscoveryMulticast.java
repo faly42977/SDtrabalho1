@@ -36,9 +36,9 @@ public class DiscoveryMulticast {
 			if (asking.trim().equals(service.trim())) {
 				System.out.println("aaa");
 				String host =
-					"http://" 
-					+ Inet4Address.getLocalHost().getHostAddress()
-					+ ":" + port + path;
+						"http://" 
+								+ Inet4Address.getLocalHost().getHostAddress()
+								+ ":" + port + path;
 				//host += path;
 				byte[] responseData = host.getBytes();
 				System.out.println("my response " + host);
@@ -47,10 +47,10 @@ public class DiscoveryMulticast {
 				System.out.println("source "+ msgPacket.getSocketAddress());
 
 				DatagramSocket uniSocket = new DatagramSocket();
-			
+
 				uniSocket.send(response);
 				uniSocket.close();
-			
+
 			}
 		}
 
@@ -62,21 +62,24 @@ public class DiscoveryMulticast {
 		if( ! group.isMulticastAddress()) {
 			System.out.println( "Not a multicast address (use range : 224.0.0.0 -- 239.255.255.255)");
 		}
-
+		System.out.println(query);
 		byte[] requestData = query.getBytes();
-		byte[] responseData = new byte[32];
 
-		try(DatagramSocket socket = new DatagramSocket(3333, group)) {
-			DatagramPacket request = new DatagramPacket( requestData, requestData.length, group, 3333 ) ;
-			socket.send( request ) ;    
-			socket.close();
+		MulticastSocket socket = new MulticastSocket(3333);
+		socket.joinGroup(group);
+		DatagramPacket request = new DatagramPacket(requestData, requestData.length, Inet4Address.getLocalHost(),12345);
+		socket.send( request ) ;
+		System.out.println("sending : " + query);
+		socket.close();
+		
+		byte[] reply = new byte[100];
+		DatagramPacket response = new DatagramPacket( reply,reply.length) ;
+		DatagramSocket uniSocket = new DatagramSocket(12345);
+		uniSocket.receive(response);
+		System.out.println("Recieved: " + String.valueOf(response.getData()));
+		uniSocket.close();
+		return String.valueOf(response.getData()).trim();
 
-			DatagramPacket response = new DatagramPacket( responseData, responseData.length, group, 3333 ) ;
-			DatagramSocket uniSocket = new DatagramSocket(3333);
-			uniSocket.receive(response);
-			uniSocket.close();
-			return String.valueOf(response.getData()).trim();
-		}
 	}
 
 

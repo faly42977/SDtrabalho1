@@ -39,18 +39,16 @@ public class NamenodeClient implements Namenode {
 	ClientConfig config = new ClientConfig();
 	Client client = ClientBuilder.newClient(config);
 	URI baseURI;
-	WebTarget target = client.target( baseURI );
+	WebTarget target;
 	DiscoveryMulticast multicast;
 
 	public NamenodeClient () {
+
 		try {
 			multicast = new DiscoveryMulticast();
-		} catch (UnknownHostException e1) {
-			System.out.println("ERROR1");
-			e1.printStackTrace();
-		}
-		try {
 			this.baseURI = new URI(multicast.discover("Namenode"));
+			System.out.println("baseURI: " + baseURI.getPath());
+			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
 			e.printStackTrace();

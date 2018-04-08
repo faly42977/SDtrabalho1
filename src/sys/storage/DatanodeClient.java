@@ -26,22 +26,21 @@ import utils.DiscoveryMulticast;
 import utils.Random;
 
 public class DatanodeClient implements Datanode {
+	private static String service = "Datanode";
 	private static Logger logger = Logger.getLogger(Datanode.class.toString() );
 	ClientConfig config = new ClientConfig();
 	Client client = ClientBuilder.newClient(config);
 	URI baseURI;
-	WebTarget target = client.target( baseURI );
+	WebTarget target;
 	DiscoveryMulticast multicast;
 	
 	public DatanodeClient () {
+	
 		try {
 			multicast = new DiscoveryMulticast();
-		} catch (UnknownHostException e1) {
-			System.out.println("ERROR1");
-			e1.printStackTrace();
-		}
-		try {
 			this.baseURI = new URI(multicast.discover("Datanode"));
+			System.out.println("baseURI: " + baseURI.getPath());
+			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
 			e.printStackTrace();
