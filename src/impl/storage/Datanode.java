@@ -44,7 +44,9 @@ public class Datanode implements api.storage.Datanode {
 			}
 
 			String r = path + "/" + id;
+			System.out.println("create:" + id);
 			return r;
+			
 		}
 	
 
@@ -64,6 +66,7 @@ public class Datanode implements api.storage.Datanode {
 		} catch (IOException e) {
 			System.out.println("Error reading");
 		}
+		System.out.println("read:" + block);
 		return data;
 		
 	}

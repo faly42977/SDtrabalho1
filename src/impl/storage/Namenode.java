@@ -22,6 +22,7 @@ public class Namenode implements api.storage.Namenode{
 
 	@Override
 	public void create(String name,  List<String> blocks) {
+		System.out.println("create called");
 		if( names.putIfAbsent(name, new ArrayList<>(blocks)) != null )
 			//logger.info("CONFLICT");
 			System.out.println("create error");
@@ -46,6 +47,7 @@ public class Namenode implements api.storage.Namenode{
 
 	@Override
 	public List<String> read(String name) {
+		System.out.println("list called");
 		List<String> blocks = names.get( name );
 		//if( blocks == null )
 			//logger.info("NOT FOUND");

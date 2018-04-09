@@ -60,7 +60,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public List<String> list(String prefix) {
-		Response response = target.path(Namenode.PATH + "/list/")
+		Response response = target.path("/list/")
 				.queryParam("prefix", prefix)
 				.request()
 				.get();
@@ -76,7 +76,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void create(String name,  List<String> blocks) {
-		Response response = target.path(Namenode.PATH + "/" + name)
+		Response response = target.path("/" + name)
 				.request()
 				.post(Entity.entity( blocks, MediaType.APPLICATION_JSON));
 		System.out.println("create" + name + String.valueOf(response.getStatus()));
@@ -84,7 +84,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void delete(String prefix) {
-		Response response = target.path(Namenode.PATH + "/list/")
+		Response response = target.path("/list/")
 				.queryParam("prefix", prefix)
 				.request()
 				.delete();
@@ -94,7 +94,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void update(String name, List<String> blocks) {
-		Response response = target.path(Namenode.PATH + "/" + name)
+		Response response = target.path("/" + name)
 				.request()
 				.put(Entity.entity(blocks, MediaType.APPLICATION_JSON));
 		System.out.println("update");
@@ -103,7 +103,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public List<String> read(String name) {
-		Response response = target.path(Namenode.PATH + "/" + name)
+		Response response = target.path("/" + name)
 				.request()
 				.get();
 		System.out.println("read");

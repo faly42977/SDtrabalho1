@@ -54,25 +54,28 @@ public class DatanodeClient implements Datanode {
 	
 	@Override
 	public String createBlock(byte[] data) {
-		Response response = target.path(Datanode.PATH) 
+		Response response = target.path("") 
 				.request()
 			    .post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM));
-		
+		System.out.println("create: " + response.getStatus());
 		return response.readEntity(String.class);
 	}
 	public void deleteBlock(String block) {
-		Response response = target.path(Datanode.PATH)
-				.queryParam("block", block)
+		Response response = target.path("/" + block)
 				.request()
 				.delete();
+		System.out.println("delete: " + response.getStatus());
 	}
 
 	@Override
 	public byte[] readBlock(String block) {
-		Response response = target.path(PATH)
-				.queryParam("block", block)
+		String[] divide = block.split("/");
+		System.out.println("divide " + divide[divide.length - 1]);
+		Response response = target.path("/" + divide[divide.length - 1])
 				.request()
 				.get();
+		System.out.println("read: " + block + " - "+ response.getStatus());
 		return response.readEntity(byte[].class);
+		
 	}
 }
