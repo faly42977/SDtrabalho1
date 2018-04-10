@@ -23,6 +23,7 @@ public class DiscoveryMulticast {
 
 	public void listen(String service, int port, String path) throws IOException {
 		System.out.println("into listen");
+		
 		//System.out.println("STARTED");
 		MulticastSocket clientSocket = new MulticastSocket(3333);
 		clientSocket.joinGroup(group);
@@ -37,8 +38,9 @@ public class DiscoveryMulticast {
 			//System.out.println("asked: " + asking);
 			//System.out.println("my service:" + service);
 			//System.out.println(asking.trim().equals(service.trim()));
+			System.out.println(asking);
 			if (asking.trim().equals(service.trim())) {
-				//System.out.println("aaa");
+				
 				String host =
 						"http://" 
 								+ Inet4Address.getLocalHost().getHostAddress()
@@ -63,6 +65,7 @@ public class DiscoveryMulticast {
 
 	public  String discover (String query) throws IOException{
 		System.out.println("into discovery");
+		System.out.println("searching for:" + query);
 		if( ! group.isMulticastAddress()) {
 			//System.out.println( "Not a multicast address (use range : 224.0.0.0 -- 239.255.255.255)");
 		}

@@ -22,7 +22,7 @@ public class Namenode implements api.storage.Namenode{
 
 	@Override
 	public synchronized void  create(String name,  List<String> blocks) {
-		System.out.println("create called");
+		System.out.println("create called , name: " + name);
 		if( names.putIfAbsent(name, new ArrayList<>(blocks)) != null )
 			throw new WebApplicationException(409);
 		else

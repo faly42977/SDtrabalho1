@@ -21,7 +21,7 @@ public class MapReduceEngine {
 	
 	public void executeJob( String jobClassBlob, String inputPrefix, String outputPrefix, int outputPartitionSize ) {
 		new MapperTask(worker, storage, jobClassBlob, inputPrefix, outputPrefix).execute();
-		
+		System.out.println("trying to exec job");
 		Set<String> reduceKeyPrefixes = storage.listBlobs(outputPrefix + "-map-").stream()
 			.map( blob -> blob.substring( 0, blob.lastIndexOf('-')))
 			.collect( Collectors.toSet() );

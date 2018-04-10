@@ -23,6 +23,7 @@ public class LocalBlobStorage implements BlobStorage {
 	@Override
 	public List<String> listBlobs(String prefix) {
 		System.out.println("localblob.listblobs");
+		System.out.println("searching for prefix:" + prefix);
 		return namenode.list(prefix);
 	}
 
