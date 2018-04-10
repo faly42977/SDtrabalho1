@@ -1,9 +1,9 @@
 package impl.storage;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+
+import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
@@ -16,29 +16,32 @@ public class Namenode implements api.storage.Namenode{
 		
 	}
 	
-	public List<String> list(String prefix) {
+	public  List<String> list(String prefix) {
 		return new ArrayList<>(names.prefixMap( prefix ).keySet());
 	}
 
 	@Override
-	public void create(String name,  List<String> blocks) {
+	public  void create(String name,  List<String> blocks) {
 		System.out.println("create called");
 		if( names.putIfAbsent(name, new ArrayList<>(blocks)) != null )
-			//logger.info("CONFLICT");
-			System.out.println("create error");
+			throw new WebApplicationException(409);
 		else
 			System.out.println("create sucessfull");
 	}
 
 	@Override
-	public void delete(String prefix) {
+	public  void delete(String prefix) {
+		System.out.println("delete called");
 		List<String> keys = new ArrayList<>(names.prefixMap( prefix ).keySet());
 		if( ! keys.isEmpty() )
 			names.keySet().removeAll( keys );
+		else
+			throw new WebApplicationException(404);
 	}
 
 	@Override
-	public void update(String name, List<String> blocks) {
+	public  void update(String name, List<String> blocks) {
+		System.out.println("update called");
 		if( names.putIfAbsent( name, new ArrayList<>(blocks)) == null ) {
 			//logger.info("NOT FOUND");
 			System.out.println("update :not found");
@@ -46,11 +49,11 @@ public class Namenode implements api.storage.Namenode{
 	}
 
 	@Override
-	public List<String> read(String name) {
-		System.out.println("list called");
+	public  List<String> read(String name) {
+		System.out.println("read called");
 		List<String> blocks = names.get( name );
-		//if( blocks == null )
-			//logger.info("NOT FOUND");
+		if( blocks == null )
+			throw new WebApplicationException(404);
 		return blocks;
 	}
 

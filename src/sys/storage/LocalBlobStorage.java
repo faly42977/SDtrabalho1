@@ -12,23 +12,26 @@ public class LocalBlobStorage implements BlobStorage {
 	private static final int BLOCK_SIZE=512;
 
 	Namenode namenode;
-	Datanode[] datanodes;
+	DataNodeManager datanodeManager;
 
 	public LocalBlobStorage() {
+		System.out.println("localblob.const");
 		this.namenode = new NamenodeClient();
-		this.datanodes = new Datanode[] { new DatanodeClient() };
+		this.datanodeManager = new DataNodeManager();
 	}
 
 	@Override
 	public List<String> listBlobs(String prefix) {
+		System.out.println("localblob.listblobs");
 		return namenode.list(prefix);
 	}
 
 	@Override
 	public void deleteBlobs(String prefix) {
+		System.out.println("localblob.deteleteblobs");
 		namenode.list( prefix ).forEach( blob -> {
 			namenode.read( blob ).forEach( block -> {
-				datanodes[0].deleteBlock(block);
+				datanodeManager.deleteBlock(block);
 			});
 		});
 		namenode.delete(prefix);
@@ -36,11 +39,13 @@ public class LocalBlobStorage implements BlobStorage {
 
 	@Override
 	public BlobReader readBlob(String name) {
-		return new BufferedBlobReader( name, namenode, datanodes[0]);
+		System.out.println("localBlob.readBlob");
+		return new BufferedBlobReader( name, namenode, datanodeManager);
 	}
 
 	@Override
 	public BlobWriter blobWriter(String name) {
-		return new BufferedBlobWriter( name, namenode, datanodes, BLOCK_SIZE);
+		System.out.println("localBlob.blobWriter");
+		return new BufferedBlobWriter( name, namenode, datanodeManager, BLOCK_SIZE);
 	}
 }

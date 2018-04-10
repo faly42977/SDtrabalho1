@@ -3,9 +3,6 @@ package sys.storage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ws.rs.client.Client;
@@ -13,17 +10,11 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.MediaType;
-
 import org.glassfish.jersey.client.ClientConfig;
-
-
-
 import api.storage.Datanode;
-import api.storage.Namenode;
 import utils.DiscoveryMulticast;
-import utils.Random;
+
 
 public class DatanodeClient implements Datanode {
 	private static String service = "Datanode";
@@ -32,32 +23,28 @@ public class DatanodeClient implements Datanode {
 	Client client = ClientBuilder.newClient(config);
 	URI baseURI;
 	WebTarget target;
-	DiscoveryMulticast multicast;
 	
-	public DatanodeClient () {
 	
+	public DatanodeClient (String id) {
 		try {
-			multicast = new DiscoveryMulticast();
-			this.baseURI = new URI(multicast.discover("Datanode"));
+			this.baseURI = new URI(id);
 			System.out.println("baseURI: " + baseURI.toString());
 			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
 			System.out.println("ERROR2");
 			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("ERROR3");
-			e.printStackTrace();
 		}
 	}
 	
 	
-	
 	@Override
 	public String createBlock(byte[] data) {
-		Response response = target.path("") 
+		Response response = target.path("/datanode") 
 				.request()
 			    .post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM));
 		System.out.println("create: " + response.getStatus());
+		System.out.println("data: " + data.toString());
+		System.out.println("uri: " + target.getUri().toString());
 		return response.readEntity(String.class);
 	}
 	public void deleteBlock(String block) {
@@ -69,11 +56,11 @@ public class DatanodeClient implements Datanode {
 
 	@Override
 	public byte[] readBlock(String block) {
-		String[] divide = block.split("/");
-		System.out.println("divide " + divide[divide.length - 1]);
-		Response response = target.path("/" + divide[divide.length - 1])
+		System.out.println("going to call" + block);
+		Response response = target.path("/datanode/" + block)
 				.request()
 				.get();
+		System.out.println("block: " + block + ";");
 		System.out.println("read: " + block + " - "+ response.getStatus());
 		return response.readEntity(byte[].class);
 		

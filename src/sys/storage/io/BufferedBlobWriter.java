@@ -7,6 +7,7 @@ import java.util.List;
 import api.storage.BlobStorage.BlobWriter;
 import api.storage.Datanode;
 import api.storage.Namenode;
+import sys.storage.DataNodeManager;
 import utils.IO;
 
 /*
@@ -23,20 +24,20 @@ public class BufferedBlobWriter implements BlobWriter {
 	final ByteArrayOutputStream buf;
 
 	final Namenode namenode; 
-	final Datanode[] datanodes;
+	final DataNodeManager datanodeManager;
 	final List<String> blocks = new LinkedList<>();
 	
-	public BufferedBlobWriter(String name, Namenode namenode, Datanode[] datanodes, int blockSize ) {
+	public BufferedBlobWriter(String name, Namenode namenode, DataNodeManager datanodeManager, int blockSize ) {
 		this.name = name;
 		this.namenode = namenode;
-		this.datanodes = datanodes;
+		this.datanodeManager = datanodeManager;
 
 		this.blockSize = blockSize;
 		this.buf = new ByteArrayOutputStream( blockSize );
 	}
 
 	private void flush( byte[] data, boolean eob ) {
-		blocks.add( datanodes[0].createBlock(data)  );
+		blocks.add( datanodeManager.createBlock(data)  );
 		if( eob ) {
 			namenode.create(name, blocks);
 			blocks.clear();

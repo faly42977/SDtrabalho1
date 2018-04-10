@@ -14,6 +14,9 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
+
+import com.sun.xml.ws.api.message.Packet.Status;
 
 import utils.Random;
 
@@ -30,36 +33,42 @@ public class Datanode implements api.storage.Datanode {
 	}
 
 	@Override
-	public String createBlock(byte[] data) {
+	public  String createBlock(byte[] data) {
 		String id = Random.key64();
 		//blocks.put( id, data);
-		
-			try {
-				FileOutputStream fos = new FileOutputStream(id) ;
-				fos.write(data);
 
-			} catch (Exception e1) {
-				System.out.println("Error_2");
+		try {
+			FileOutputStream fos = new FileOutputStream(id) ;
+			fos.write(data);
+			fos.close();
+		} catch (Exception e1) {
+			System.out.println("Error_2");
 
-			}
-
-			String r = path + "/" + id;
-			System.out.println("create:" + id);
-			return r;
-			
 		}
-	
+
+		String r = path + "/" + id;
+		System.out.println("create:" + id);
+		return r;
+
+	}
+
 
 	@Override
-	public void deleteBlock(String block) {
+	public  void deleteBlock(String block) {
 		System.out.println("delete: " + block);
 		//blocks.remove(block);
+
+
+		if (!new File(block).exists()) {
+			throw new WebApplicationException(404);
+		}
 		File file = new File(block);
 		file.delete();
+
 	}
 
 	@Override
-	public byte[] readBlock(String block) {
+	public  byte[] readBlock(String block) {
 		byte[] data = null;
 		try {
 			data = Files.readAllBytes(new File(block).toPath());
@@ -68,6 +77,6 @@ public class Datanode implements api.storage.Datanode {
 		}
 		System.out.println("read:" + block);
 		return data;
-		
+
 	}
 }

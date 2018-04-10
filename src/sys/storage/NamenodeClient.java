@@ -3,10 +3,8 @@ package sys.storage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -14,10 +12,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 
-import org.apache.commons.collections4.Trie;
-import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.glassfish.jersey.client.ClientConfig;
 
 import api.storage.Namenode;
@@ -76,7 +71,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void create(String name,  List<String> blocks) {
-		Response response = target.path("/" + name)
+		Response response = target.path("/namenode/" + name)
 				.request()
 				.post(Entity.entity( blocks, MediaType.APPLICATION_JSON));
 		System.out.println("create" + name + String.valueOf(response.getStatus()));
@@ -94,7 +89,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void update(String name, List<String> blocks) {
-		Response response = target.path("/" + name)
+		Response response = target.path("/namenode/" + name)
 				.request()
 				.put(Entity.entity(blocks, MediaType.APPLICATION_JSON));
 		System.out.println("update");
@@ -103,16 +98,19 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public List<String> read(String name) {
-		Response response = target.path("/" + name)
+		Response response = target.path("/namenode/" + name)
 				.request()
 				.get();
 		System.out.println("read");
 		System.err.println( response.getStatus() );
-		if( response.hasEntity() ) {
+		System.out.println("STATUS RECVD:" + response.getStatus());
+		if( response.getStatus()==200 ) {
 			List<String> data = response.readEntity(List.class);
+			if (data == null)
+				System.out.println("DATA NULL");
 			return data;
 		} else
-			return null;
+			return new ArrayList<String>();
 	}
 
 }

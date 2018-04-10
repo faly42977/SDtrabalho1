@@ -8,6 +8,7 @@ import java.util.List;
 import api.storage.BlobStorage.BlobReader;
 import api.storage.Datanode;
 import api.storage.Namenode;
+import sys.storage.DataNodeManager;
 
 /*
  * 
@@ -21,16 +22,16 @@ public class BufferedBlobReader implements BlobReader {
 
 	final String name;
 	final Namenode namenode; 
-	final Datanode datanode;
+	final DataNodeManager datanode;
 	
 	final Iterator<String> blocks;
 
 	final LazyBlockReader lazyBlockIterator;
 	
-	public BufferedBlobReader( String name, Namenode namenode, Datanode datanode ) {
+	public BufferedBlobReader( String name, Namenode namenode, DataNodeManager datanodeManager ) {
 		this.name = name;
 		this.namenode = namenode;
-		this.datanode = datanode;
+		this.datanode = datanodeManager;
 		
 		this.blocks = this.namenode.read( name ).iterator();
 		this.lazyBlockIterator = new LazyBlockReader();

@@ -6,8 +6,11 @@ import java.net.DatagramSocket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.SocketAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DiscoveryMulticast {
 
@@ -19,6 +22,7 @@ public class DiscoveryMulticast {
 	}
 
 	public void listen(String service, int port, String path) throws IOException {
+		System.out.println("into listen");
 		//System.out.println("STARTED");
 		MulticastSocket clientSocket = new MulticastSocket(3333);
 		clientSocket.joinGroup(group);
@@ -58,7 +62,7 @@ public class DiscoveryMulticast {
 
 
 	public  String discover (String query) throws IOException{
-
+		System.out.println("into discovery");
 		if( ! group.isMulticastAddress()) {
 			//System.out.println( "Not a multicast address (use range : 224.0.0.0 -- 239.255.255.255)");
 		}
@@ -66,25 +70,47 @@ public class DiscoveryMulticast {
 		byte[] requestData = query.getBytes();
 		try(DatagramSocket socket = new DatagramSocket()) {
 			DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
-			//System.out.println(request);
-			////System.out.println("connected: " + socket.isConnected());
 			socket.send( request ) ;
-			//System.out.println("sending : " + query);
-
-
 			byte[] reply = new byte[100];
 			DatagramPacket response = new DatagramPacket( reply,reply.length) ;
-
-
 			socket.receive(response);
-
-			//System.out.println("Port: " + String.valueOf(response.getPort()));
-			//System.out.println("Response: " + new String(response.getData()).trim());
-			//socket.close();
+			socket.close();
 			return new String(response.getData()).trim();
 		}
 
 
+
 	}
 
-}
+	public List<String> findEvery(String query){
+		System.out.println("into findEvery");
+		ArrayList<String> nodesList = new ArrayList<String>();
+		byte[] requestData = query.getBytes();
+		try(DatagramSocket socket = new DatagramSocket()) {
+			DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
+			socket.send( request ) ;
+
+			while (true) {
+				try {
+					socket.setSoTimeout(3000);
+					byte[] reply = new byte[100];
+					DatagramPacket response = new DatagramPacket( reply,reply.length) ;
+					socket.receive(response);
+					nodesList.add(new String(response.getData()).trim());
+					System.out.println("Got DataNode: " + new String(response.getData()).trim());
+				}catch(SocketTimeoutException e) {
+					System.out.println("Received all Datanodes");
+					break;
+				}
+			}
+			socket.close();
+
+			return nodesList;
+		} catch (Exception e) {
+			System.out.println("Error getting datanodes");
+
+		}
+	return nodesList;	
+	}
+
+	}
