@@ -21,7 +21,7 @@ public class Namenode implements api.storage.Namenode{
 	}
 
 	@Override
-	public  void create(String name,  List<String> blocks) {
+	public synchronized void  create(String name,  List<String> blocks) {
 		System.out.println("create called");
 		if( names.putIfAbsent(name, new ArrayList<>(blocks)) != null )
 			throw new WebApplicationException(409);
@@ -30,7 +30,7 @@ public class Namenode implements api.storage.Namenode{
 	}
 
 	@Override
-	public  void delete(String prefix) {
+	public synchronized void delete(String prefix) {
 		System.out.println("delete called");
 		List<String> keys = new ArrayList<>(names.prefixMap( prefix ).keySet());
 		if( ! keys.isEmpty() )
@@ -40,7 +40,7 @@ public class Namenode implements api.storage.Namenode{
 	}
 
 	@Override
-	public  void update(String name, List<String> blocks) {
+	public synchronized void update(String name, List<String> blocks) {
 		System.out.println("update called");
 		if( names.putIfAbsent( name, new ArrayList<>(blocks)) == null ) {
 			//logger.info("NOT FOUND");
@@ -49,7 +49,7 @@ public class Namenode implements api.storage.Namenode{
 	}
 
 	@Override
-	public  List<String> read(String name) {
+	public synchronized List<String> read(String name) {
 		System.out.println("read called");
 		List<String> blocks = names.get( name );
 		if( blocks == null )

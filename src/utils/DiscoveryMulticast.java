@@ -42,7 +42,7 @@ public class DiscoveryMulticast {
 				String host =
 						"http://" 
 								+ Inet4Address.getLocalHost().getHostAddress()
-								+ ":" + port + path;
+								+ ":" + port + "/"; //+ path;
 				//host += path;
 				byte[] responseData = host.getBytes();
 				//System.out.println("my response " + host);
