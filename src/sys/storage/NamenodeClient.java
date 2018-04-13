@@ -55,7 +55,8 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public List<String> list(String prefix) {
-		Response response = target.path("/list/")
+		System.out.println("TRYING " + prefix);
+		Response response = target.path("/namenode/list")
 				.queryParam("prefix", prefix)
 				.request()
 				.get();
@@ -64,8 +65,9 @@ public class NamenodeClient implements Namenode {
 			List<String> data = response.readEntity(List.class);
 			return data;
 		} else {
+			System.out.println(target.path("/list/").queryParam("prefix", prefix).getUri());
 			System.err.println( response.getStatus() );
-			return null;
+			return new ArrayList<String>();
 		}
 	}
 
@@ -79,7 +81,7 @@ public class NamenodeClient implements Namenode {
 
 	@Override
 	public void delete(String prefix) {
-		Response response = target.path("/list/")
+		Response response = target.path("/namenode/list")
 				.queryParam("prefix", prefix)
 				.request()
 				.delete();

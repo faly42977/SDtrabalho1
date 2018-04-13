@@ -2,6 +2,7 @@ package sys.mapreduce;
 import java.net.Inet4Address;
 
 import javax.jws.WebService;
+import javax.ws.rs.WebApplicationException;
 import javax.xml.ws.Endpoint;
 
 import api.mapreduce.ComputeNode;
@@ -21,14 +22,16 @@ public class ComputeNodeServer implements ComputeNode{
 			throw new InvalidArgumentException();
 
 		else {
+			
 			mapReduce.executeJob(jobClassBlob, inputPrefix, outputPrefix, outPartSize);
-			//throw new WebApplicationException(404);
+			
 		}
 
 	}
 
 	public static void main(String[] args ) {
 		try{
+			System.out.println("bbbbbbb");
 			String host = Inet4Address.getLocalHost().getHostAddress();
 			String URI_BASE = "http://" + host + ":" + 6666 + ComputeNode.PATH;
 			System.out.println("URI:"+ URI_BASE);
@@ -37,7 +40,6 @@ public class ComputeNodeServer implements ComputeNode{
 		}catch (Exception e) {
 			System.out.println("Error on thread main - ComputerNodeServer");
 
-		}
-
+		}	
 	}
 }

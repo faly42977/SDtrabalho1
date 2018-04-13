@@ -16,12 +16,21 @@ public class Namenode implements api.storage.Namenode{
 		
 	}
 	
+	public void print() {
+		System.out.println("LIST PRINT");
+		List<String> l = new ArrayList<>(names.prefixMap("docs-").keySet());
+		for(String s:l)
+			System.out.println(s);
+	}
+	@Override
 	public  List<String> list(String prefix) {
+		System.out.println("list called");
 		return new ArrayList<>(names.prefixMap( prefix ).keySet());
 	}
 
 	@Override
 	public synchronized void  create(String name,  List<String> blocks) {
+		print();
 		System.out.println("create called , name: " + name);
 		if( names.putIfAbsent(name, new ArrayList<>(blocks)) != null )
 			throw new WebApplicationException(409);
@@ -45,6 +54,7 @@ public class Namenode implements api.storage.Namenode{
 		if( names.putIfAbsent( name, new ArrayList<>(blocks)) == null ) {
 			//logger.info("NOT FOUND");
 			System.out.println("update :not found");
+			throw new WebApplicationException(404);
 		}
 	}
 
