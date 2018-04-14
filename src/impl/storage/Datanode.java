@@ -32,17 +32,23 @@ public class Datanode implements api.storage.Datanode {
 
 	public Datanode(String uri) {
 		path = uri + "datanode";
-		new Thread(()->{
-			while(true) {
-				try {
-					this.wait(15000);
-				} catch (InterruptedException e) {
-					System.out.println("Error  on wait");
+		System.out.println("initialized");
+		new Thread()
+		{
+		    public void run() {
+		        System.out.println("blah");
+		        while(true) {
+					try {
+						Thread.sleep(15000);
+					} catch (InterruptedException e) {
+						System.out.println("Error  on wait");
+					}
+					validate();
+					
 				}
-				validate();
-			}
-			
-		}).run();
+		    }
+		}.start();
+		System.out.println("out of thread");
 	}
 
 	private void validate() {

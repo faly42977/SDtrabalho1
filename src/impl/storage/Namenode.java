@@ -14,19 +14,24 @@ public class Namenode implements api.storage.Namenode{
 
 	Trie<String, List<String>> names = new PatriciaTrie<>();
 	List<String> removed = new ArrayList<String>();
-	
+
 	public Namenode() {
-		new Thread(()-> {
-			try {
-				this.wait(15000);
-			} catch (InterruptedException e) {
-				System.out.println("Error on wait");
+		new Thread()
+		{
+			public void run() {
+				while(true) {
+					try {
+						Thread.sleep(15000);
+					} catch (InterruptedException e) {
+						System.out.println("Error on wait");
+					}
+					GarbageCollector.report(removed);
+					removed = new ArrayList<String>();
+				}
 			}
-			GarbageCollector.report(removed);
-			removed = new ArrayList<String>();
-		}).run();;
+		}.start();
 	}
-	
+
 	public void print() {
 		System.out.println("LIST PRINT");
 		List<String> l = new ArrayList<>(names.prefixMap("docs-").keySet());
@@ -60,7 +65,7 @@ public class Namenode implements api.storage.Namenode{
 			}
 			removed.addAll(ids);
 			names.keySet().removeAll( keys );
-			
+
 		}
 		else
 			throw new WebApplicationException(404);
