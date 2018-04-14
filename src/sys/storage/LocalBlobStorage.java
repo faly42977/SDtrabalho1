@@ -17,7 +17,9 @@ public class LocalBlobStorage implements BlobStorage {
 	public LocalBlobStorage() {
 		System.out.println("localblob.const");
 		this.namenode = new NamenodeClient();
+		System.out.println("NamenodeClient ok");
 		this.datanodeManager = new DataNodeManager();
+		System.out.println("DataNodeManager ok");
 	}
 
 	@Override

@@ -14,8 +14,8 @@ public class MainTest {
 	
 	public static void main(String[] args) throws IOException {
 	
-	DiscoveryMulticast d = new DiscoveryMulticast();
-	System.out.println(d.discover("Namenode"));
+	
+	System.out.println(DiscoveryMulticast.discover("Namenode"));
 	
 	/*
 		String host;

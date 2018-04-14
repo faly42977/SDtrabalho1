@@ -35,10 +35,10 @@ public class DatanodeServer {
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
 		System.out.println("URI " + URI_BASE);
 		
-		DiscoveryMulticast multicast = new DiscoveryMulticast();
+		
 		new Thread (() ->{
 			try {
-				multicast.listen(SERVICE, PORT, Datanode.PATH);
+				DiscoveryMulticast.listen(SERVICE, PORT, Datanode.PATH);
 			} catch (IOException e) {
 				System.out.println("ERROR ");
 				e.printStackTrace();

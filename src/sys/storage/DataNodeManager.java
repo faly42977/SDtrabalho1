@@ -1,25 +1,36 @@
 package sys.storage;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import impl.storage.Namenode;
 import utils.DiscoveryMulticast;
 
 public class DataNodeManager {
-	private DiscoveryMulticast multicast;
 	private Map<String, DatanodeClient> datanodes;
 	private int DataNodecounter;
 	private int blockCounter;
 	public DataNodeManager() {
 		System.out.println("datanodeMNGR.const");
 		try {
-			this.multicast = new DiscoveryMulticast();
+			
 			this.datanodes = new HashMap<String, DatanodeClient>();
 			DataNodecounter = 0;
 			blockCounter = 0;
-			updateDataNodes();
-		} catch (UnknownHostException e) {
+			new Thread (() ->{
+				
+				try {
+					System.out.println("updateDataNodes();");
+					updateDataNodes();
+				} catch (Exception e) {
+					updateDataNodes();
+					
+				}
+			}).run();
+			
+		} catch (Exception e) {
 			System.out.println("Error creating Multicast");
 		}
 	}
@@ -60,9 +71,9 @@ public class DataNodeManager {
 		datanodes.putIfAbsent(nodeId+"datanode", new DatanodeClient(nodeId));
 	}
 	
-	public void updateDataNodes() {
+	public synchronized  void updateDataNodes() {
 		System.out.println("datanodeMNGR.updateDataNodes");
-		for ( String nodeId : multicast.findEvery("Datanode")){
+		for ( String nodeId : DiscoveryMulticast.findEvery("Datanode")){
 			if (!datanodes.containsKey(nodeId) ) {
 				addDataNode(nodeId);
 				DataNodecounter++;

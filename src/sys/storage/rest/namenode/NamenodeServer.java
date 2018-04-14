@@ -17,7 +17,7 @@ public class NamenodeServer {
 	private static final String SERVICE = "Namenode";
 	public static void main(String[] args) throws UnknownHostException {
 		
-		DiscoveryMulticast multicast = new DiscoveryMulticast();
+		
 		
 		
 		String host;
@@ -39,11 +39,11 @@ public class NamenodeServer {
 		
 		new Thread (() ->{
 			try {
-				multicast.listen(SERVICE, PORT, Namenode.PATH);
+				DiscoveryMulticast.listen(SERVICE, PORT, Namenode.PATH);
 			} catch (IOException e) {
 				System.out.println("ERROR ");
 				e.printStackTrace();
 			}
-		}).run();;
+		}).run();
 	}
 }

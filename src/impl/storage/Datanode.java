@@ -24,7 +24,7 @@ public class Datanode implements api.storage.Datanode {
 
 
 	private static final int INITIAL_SIZE = 32;
-	private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
+	//private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
 	private String path;
 
 
@@ -33,7 +33,7 @@ public class Datanode implements api.storage.Datanode {
 	}
 
 	@Override
-	public synchronized String createBlock(byte[] data) {
+	public  String createBlock(byte[] data) {
 		String id = Random.key64();
 		//blocks.put( id, data);
 
@@ -41,7 +41,6 @@ public class Datanode implements api.storage.Datanode {
 			FileOutputStream fos = new FileOutputStream(id) ;
 			fos.write(data);
 			fos.close();
-			blocks.put(id, data);
 		} catch (Exception e1) {
 			System.out.println("Error_2");
 
@@ -55,9 +54,9 @@ public class Datanode implements api.storage.Datanode {
 
 
 	@Override
-	public synchronized void deleteBlock(String block) {
+	public  void deleteBlock(String block) {
 		System.out.println("delete: " + block);
-		
+		//blocks.remove(block);
 
 
 		if (!new File(block).exists()) {
@@ -65,21 +64,16 @@ public class Datanode implements api.storage.Datanode {
 		}
 		File file = new File(block);
 		file.delete();
-		blocks.remove(block);
 
 	}
 
 	@Override
-	public synchronized byte[] readBlock(String block) {
+	public  byte[] readBlock(String block) {
 		byte[] data = null;
-		if(blocks.containsKey(block)) {
-			System.out.println("read:" + block);
-			return blocks.get(block);
-		}
 		try {
 			data = Files.readAllBytes(new File(block).toPath());
 		} catch (IOException e) {
-			throw new WebApplicationException(404);
+			System.out.println("Error reading");
 		}
 		System.out.println("read:" + block);
 		return data;

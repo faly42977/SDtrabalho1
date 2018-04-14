@@ -12,22 +12,16 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscoveryMulticast {
+public  class DiscoveryMulticast {
 
-	private static final int TRIES = 10;
-	final InetAddress group;
 
-	public DiscoveryMulticast () throws UnknownHostException {
-		//System.setProperty("java.net.preferIPv4Stack", "true");
-		group =  InetAddress.getByName("226.226.226.226") ;	
-	}
 
-	public void listen(String service, int port, String path) throws IOException {
+	public static void listen(String service, int port, String path) throws IOException {
 		System.out.println("into listen");
-
+		
 		//System.out.println("STARTED");
 		MulticastSocket clientSocket = new MulticastSocket(3333);
-		clientSocket.joinGroup(group);
+		clientSocket.joinGroup(InetAddress.getByName("226.226.226.226"));
 
 		while (true) {
 			byte[] requestData = new byte[100];
@@ -41,7 +35,7 @@ public class DiscoveryMulticast {
 			//System.out.println(asking.trim().equals(service.trim()));
 			System.out.println(asking);
 			if (asking.trim().equals(service.trim())) {
-
+				
 				String host =
 						"http://" 
 								+ Inet4Address.getLocalHost().getHostAddress()
@@ -64,69 +58,66 @@ public class DiscoveryMulticast {
 	}
 
 
-	public  String discover (String query) throws IOException{
+	public static String discover (String query) throws IOException{
 		System.out.println("into discovery");
 		System.out.println("searching for:" + query);
-		if( ! group.isMulticastAddress()) {
+		if( ! InetAddress.getByName("226.226.226.226").isMulticastAddress()) {
 			//System.out.println( "Not a multicast address (use range : 224.0.0.0 -- 239.255.255.255)");
 		}
 		//System.out.println(query);
 		byte[] requestData = query.getBytes();
-
 		try(DatagramSocket socket = new DatagramSocket()) {
-			DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
+			socket.setSoTimeout(3000);
+			DatagramPacket request = new DatagramPacket( requestData, requestData.length,InetAddress.getByName("226.226.226.226"),3333) ;
+			socket.send( request ) ;
+			System.out.println("Discovery MC sent request");
 			byte[] reply = new byte[100];
 			DatagramPacket response = new DatagramPacket( reply,reply.length) ;
-			for(int i = 0;i<TRIES;i++) {
-				socket.setSoTimeout(6000);
-				socket.send( request ) ;
-				socket.receive(response);
-
-			}
+			
+			socket.receive(response);
+			System.out.println("Discovery MC got response:");
+			System.out.println(new String(response.getData()).trim());
 			socket.close();
 			return new String(response.getData()).trim();
+		}
+		catch (Exception e ) {
+			System.out.println("discovering again for:" + query);
+			return discover(query);
 		}
 
 
 
 	}
 
-	public List<String> findEvery(String query){
+	public static List<String> findEvery(String query){
 		System.out.println("into findEvery");
 		ArrayList<String> nodesList = new ArrayList<String>();
 		byte[] requestData = query.getBytes();
-		DatagramPacket request = new DatagramPacket( requestData, requestData.length,group,3333) ;
-		DatagramSocket socket;
-		try {
-			socket = new DatagramSocket();
+		try(DatagramSocket socket = new DatagramSocket()) {
+			DatagramPacket request = new DatagramPacket( requestData, requestData.length,InetAddress.getByName("226.226.226.226"),3333) ;
+			socket.send( request ) ;
 
-			for(int i = 0;i < TRIES;i++) {
-
-
-				socket.send( request ) ;
-				System.out.println("TRYYY");
-				while (true) {
-					try {
-						socket.setSoTimeout(3000);
-						byte[] reply = new byte[100];
-						DatagramPacket response = new DatagramPacket( reply,reply.length) ;
-						socket.receive(response);
-						nodesList.add(new String(response.getData()).trim());
-						System.out.println("Got DataNode: " + new String(response.getData()).trim());
-					}catch(SocketTimeoutException e) {
-						System.out.println("Received all Datanodes");
-						break;
-					}
+			while (true) {
+				try {
+					socket.setSoTimeout(3000);
+					byte[] reply = new byte[100];
+					DatagramPacket response = new DatagramPacket( reply,reply.length) ;
+					socket.receive(response);
+					nodesList.add(new String(response.getData()).trim());
+					System.out.println("Got DataNode: " + new String(response.getData()).trim());
+				}catch(SocketTimeoutException e) {
+					System.out.println("Received all Datanodes");
+					break;
 				}
 			}
 			socket.close();
 
 			return nodesList;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			return null;
+		} catch (Exception e) {
+			System.out.println("Error getting datanodes");
+
 		}
-		
+	return nodesList;	
 	}
 
-}
+	}
