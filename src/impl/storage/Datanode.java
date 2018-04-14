@@ -52,9 +52,14 @@ public class Datanode implements api.storage.Datanode {
 	}
 
 	private void validate() {
+		System.out.println("INTO VALIDATE");
 		List<String> ids = GarbageCollector.listen();
 		for(String s:ids) {
+			try {
 			deleteBlock(s);
+			}catch (Exception e) {
+				System.out.println("error");
+			}
 		}
 	}
 

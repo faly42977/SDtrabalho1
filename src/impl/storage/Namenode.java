@@ -58,9 +58,12 @@ public class Namenode implements api.storage.Namenode{
 	public synchronized void delete(String prefix) {
 		System.out.println("delete called");
 		List<String> keys = new ArrayList<>(names.prefixMap( prefix ).keySet());
+		for (String s : keys)
+			//System.out.println("no name node nome:" + s);
 		if( ! keys.isEmpty() ) {
 			List<String> ids = new ArrayList<String>();
 			for(List<String> part:names.prefixMap( prefix ).values()) {
+			//	System.out.println("part: " + part);
 				ids.addAll(part);
 			}
 			removed.addAll(ids);
