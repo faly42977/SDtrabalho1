@@ -22,6 +22,7 @@ public class DataNodeManager {
 			new Thread (() ->{
 				
 				try {
+					//Thread.sleep(1000);
 					System.out.println("updateDataNodes();");
 					updateDataNodes();
 				} catch (Exception e) {

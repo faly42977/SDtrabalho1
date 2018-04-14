@@ -12,35 +12,56 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 
 import com.sun.xml.ws.api.message.Packet.Status;
 
+import utils.GarbageCollector;
 import utils.Random;
 
 public class Datanode implements api.storage.Datanode {
 
 
 	private static final int INITIAL_SIZE = 32;
-	//private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
+	private Map<String, byte[]> blocks = new HashMap<>(INITIAL_SIZE);
 	private String path;
 
 
 	public Datanode(String uri) {
 		path = uri + "datanode";
+		new Thread(()->{
+			while(true) {
+				try {
+					this.wait(15000);
+				} catch (InterruptedException e) {
+					System.out.println("Error  on wait");
+				}
+				validate();
+			}
+			
+		}).run();
+	}
+
+	private void validate() {
+		List<String> ids = GarbageCollector.listen();
+		for(String s:ids) {
+			deleteBlock(s);
+		}
 	}
 
 	@Override
 	public  String createBlock(byte[] data) {
 		String id = Random.key64();
-		//blocks.put( id, data);
+		
 
 		try {
 			FileOutputStream fos = new FileOutputStream(id) ;
 			fos.write(data);
 			fos.close();
+			blocks.put( id, data);
 		} catch (Exception e1) {
 			System.out.println("Error_2");
 
@@ -56,9 +77,7 @@ public class Datanode implements api.storage.Datanode {
 	@Override
 	public  void deleteBlock(String block) {
 		System.out.println("delete: " + block);
-		//blocks.remove(block);
-
-
+		blocks.remove(block);
 		if (!new File(block).exists()) {
 			throw new WebApplicationException(404);
 		}
@@ -70,6 +89,8 @@ public class Datanode implements api.storage.Datanode {
 	@Override
 	public  byte[] readBlock(String block) {
 		byte[] data = null;
+		if(blocks.containsKey(block))
+			return blocks.get(block);
 		try {
 			data = Files.readAllBytes(new File(block).toPath());
 		} catch (IOException e) {

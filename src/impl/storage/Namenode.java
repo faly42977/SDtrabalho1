@@ -8,12 +8,23 @@ import javax.ws.rs.WebApplicationException;
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
+import utils.GarbageCollector;
+
 public class Namenode implements api.storage.Namenode{
 
 	Trie<String, List<String>> names = new PatriciaTrie<>();
+	List<String> removed = new ArrayList<String>();
 	
 	public Namenode() {
-		
+		new Thread(()-> {
+			try {
+				this.wait(15000);
+			} catch (InterruptedException e) {
+				System.out.println("Error on wait");
+			}
+			GarbageCollector.report(removed);
+			removed = new ArrayList<String>();
+		}).run();;
 	}
 	
 	public void print() {
@@ -42,8 +53,15 @@ public class Namenode implements api.storage.Namenode{
 	public synchronized void delete(String prefix) {
 		System.out.println("delete called");
 		List<String> keys = new ArrayList<>(names.prefixMap( prefix ).keySet());
-		if( ! keys.isEmpty() )
+		if( ! keys.isEmpty() ) {
+			List<String> ids = new ArrayList<String>();
+			for(List<String> part:names.prefixMap( prefix ).values()) {
+				ids.addAll(part);
+			}
+			removed.addAll(ids);
 			names.keySet().removeAll( keys );
+			
+		}
 		else
 			throw new WebApplicationException(404);
 	}
