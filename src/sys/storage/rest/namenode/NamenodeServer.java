@@ -39,7 +39,7 @@ public class NamenodeServer {
 		
 		new Thread (() ->{
 			try {
-				DiscoveryMulticast.listen(SERVICE, PORT, Namenode.PATH);
+				DiscoveryMulticast.listen(SERVICE, PORT, api.storage.Namenode.PATH);
 			} catch (IOException e) {
 				System.out.println("ERROR ");
 				e.printStackTrace();

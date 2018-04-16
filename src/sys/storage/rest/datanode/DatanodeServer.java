@@ -38,7 +38,7 @@ public class DatanodeServer {
 		
 		new Thread (() ->{
 			try {
-				DiscoveryMulticast.listen(SERVICE, PORT, Datanode.PATH);
+				DiscoveryMulticast.listen(SERVICE, PORT, api.storage.Datanode.PATH);
 			} catch (IOException e) {
 				System.out.println("ERROR ");
 				e.printStackTrace();

@@ -15,9 +15,6 @@ public class MainTest {
 	public static void main(String[] args) throws IOException {
 	
 	
-	System.out.println(DiscoveryMulticast.discover("Namenode"));
-	
-	/*
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
@@ -34,15 +31,6 @@ public class MainTest {
 
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
 
-		String URI_BASE2 = "http://" + host + ":9998/";
-
-		ResourceConfig config2 = new ResourceConfig();
-		config2.register( new Datanode());
-
-		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE2), config2);
-		
-		System.err.println("Server ready....");
-		*/
 	}
 
 }

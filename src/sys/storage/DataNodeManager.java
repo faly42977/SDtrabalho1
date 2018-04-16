@@ -13,7 +13,7 @@ public class DataNodeManager {
 	private int DataNodecounter;
 	private int blockCounter;
 	public DataNodeManager() {
-		System.out.println("datanodeMNGR.const");
+		//System.out.println("datanodeMNGR.const");
 		try {
 			
 			this.datanodes = new HashMap<String, DatanodeClient>();
@@ -23,7 +23,7 @@ public class DataNodeManager {
 				
 				try {
 					//Thread.sleep(1000);
-					System.out.println("updateDataNodes();");
+					//System.out.println("updateDataNodes();");
 					updateDataNodes();
 				} catch (Exception e) {
 					updateDataNodes();
@@ -32,12 +32,12 @@ public class DataNodeManager {
 			}).run();
 			
 		} catch (Exception e) {
-			System.out.println("Error creating Multicast");
+			//System.out.println("Error creating Multicast");
 		}
 	}
 
 	public synchronized String createBlock(byte[] data) {
-		System.out.println("datanodeMNGR.createBlock");
+		//System.out.println("datanodeMNGR.createBlock");
 		int num = (blockCounter % DataNodecounter);
 		Object[] nodes  = datanodes.values().toArray();
 		blockCounter++;
@@ -45,7 +45,7 @@ public class DataNodeManager {
 	}
 	
 	public synchronized void deleteBlock(String block) {
-		System.out.println("datanodeMNGR.deleteBlock");
+		//System.out.println("datanodeMNGR.deleteBlock");
 		String[] division = block.split("/");
 		String id = division[division.length - 1];
 		String body = block.substring(0, block.length() - id.length() -1);
@@ -54,26 +54,26 @@ public class DataNodeManager {
 	}
 	
 	public synchronized byte[] readBlock(String block) {
-		System.out.println("datanodeMNGR.readBlock");
+		//System.out.println("datanodeMNGR.readBlock");
 		String[] division = block.split("/");
 		String id = division[division.length - 1];
 		String body = block.substring(0, block.length() - id.length() -1);
-		System.out.println("body:" + body + ", id:" + id);
-		System.out.println("block<:" + block);
-		for (String key :datanodes.keySet())
-			System.out.println(key);
+		//System.out.println("body:" + body + ", id:" + id);
+		//System.out.println("block<:" + block);
+		//for (String key :datanodes.keySet())
+			//System.out.println(key);
 		
 		
 		return datanodes.get(body).readBlock(id);
 	}
 	
 	public synchronized void addDataNode(String nodeId) {
-		System.out.println("datanodeMNGR.addDataNode");
+		//System.out.println("datanodeMNGR.addDataNode");
 		datanodes.putIfAbsent(nodeId+"datanode", new DatanodeClient(nodeId));
 	}
 	
 	public synchronized  void updateDataNodes() {
-		System.out.println("datanodeMNGR.updateDataNodes");
+		//System.out.println("datanodeMNGR.updateDataNodes");
 		for ( String nodeId : DiscoveryMulticast.findEvery("Datanode")){
 			if (!datanodes.containsKey(nodeId) ) {
 				addDataNode(nodeId);
