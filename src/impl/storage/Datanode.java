@@ -43,9 +43,9 @@ public class Datanode implements api.storage.Datanode,api.storage.Validate {
 
 	public Datanode(String uri) {
 		path = uri + "datanode";
-		System.out.println("initialized");
+	
 		startValidation();
-		System.out.println("out of thread");
+	
 	}
 
 
@@ -55,37 +55,29 @@ public class Datanode implements api.storage.Datanode,api.storage.Validate {
 		new Thread() { 
 			public void run() {
 				while(true) {
-					System.out.println("cycle: "+ myversion.get());
 					int outversion = GarbageCollector.findLatestVersion("Validate");
 					if(outversion > myversion.get()) {
-						System.out.println("Clean called");
 						String uri = GarbageCollector.findLatestPath("Validate");
-						System.out.println("URI " + uri);
 						ClientConfig config = new ClientConfig();
 						Client client = ClientBuilder.newClient(config);
 						WebTarget target = client.target( uri );
 						Response r = target.path("/vallist").request().get();
 						if(r.getStatus() == 200) {
-							System.out.println("geting valist sucess");
 							remove = r.readEntity(List.class);
-							System.out.println("removelist = " + remove);
 							myversion.set(outversion);
 							for(String s : remove) {
 								String[] split =  s.split("/");
 								String id = split[split.length-1];
-								System.out.println(id);
 								File f = new File(id);
 								if(f.exists()) {
-									System.out.println("Found garbage " + id);
 									try{
 										deleteBlock(id);
 									}catch(WebApplicationException e) {
-										System.out.println("Error on clean file shoud exist");
 									}
 								}
 							}
 						}else {
-							System.out.println("error getting valist: " + r.getStatus());
+							
 						}
 					}
 				}
@@ -106,12 +98,11 @@ public class Datanode implements api.storage.Datanode,api.storage.Validate {
 			fos.close();
 			blocks.put( id, data);
 		} catch (Exception e1) {
-			System.out.println("Error_2");
-
+	
 		}
 
 		String r = path + "/" + id;
-		//System.out.println("create:" + id);
+		
 		return r;
 
 	}
@@ -119,7 +110,6 @@ public class Datanode implements api.storage.Datanode,api.storage.Validate {
 
 	@Override
 	public  void deleteBlock(String block) {
-		System.out.println("delete: " + block);
 		blocks.remove(block);
 		if (!new File(block).exists()) {
 			throw new WebApplicationException(404);
@@ -139,7 +129,7 @@ public class Datanode implements api.storage.Datanode,api.storage.Validate {
 		} catch (IOException e) {
 			throw new WebApplicationException(404);
 		}
-		System.out.println("read:" + block);
+		
 		return data;
 
 	}

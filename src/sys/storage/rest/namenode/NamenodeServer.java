@@ -23,7 +23,7 @@ public class NamenodeServer {
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
-			System.out.println("host: " + host);
+			
 		} catch (UnknownHostException e) {
 			System.err.println("Cant obtain address");
 			return;
@@ -35,13 +35,13 @@ public class NamenodeServer {
 		config.register( new Namenode());
 
 		JdkHttpServerFactory.createHttpServer( URI.create(URI_BASE), config);
-		System.out.println("URI " + URI_BASE);
+		
 		
 		new Thread (() ->{
 			try {
 				DiscoveryMulticast.listen(SERVICE, PORT, api.storage.Namenode.PATH);
 			} catch (IOException e) {
-				System.out.println("ERROR ");
+				
 				e.printStackTrace();
 			}
 		}).run();

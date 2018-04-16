@@ -13,7 +13,7 @@ public class DataNodeManager {
 	private int DataNodecounter;
 	private int blockCounter;
 	public DataNodeManager() {
-		//System.out.println("datanodeMNGR.const");
+		
 		try {
 			
 			this.datanodes = new HashMap<String, DatanodeClient>();
@@ -22,8 +22,7 @@ public class DataNodeManager {
 			new Thread (() ->{
 				
 				try {
-					//Thread.sleep(1000);
-					//System.out.println("updateDataNodes();");
+			
 					updateDataNodes();
 				} catch (Exception e) {
 					updateDataNodes();
@@ -32,12 +31,12 @@ public class DataNodeManager {
 			}).run();
 			
 		} catch (Exception e) {
-			//System.out.println("Error creating Multicast");
+		
 		}
 	}
 
 	public synchronized String createBlock(byte[] data) {
-		//System.out.println("datanodeMNGR.createBlock");
+		
 		int num = (blockCounter % DataNodecounter);
 		Object[] nodes  = datanodes.values().toArray();
 		blockCounter++;
@@ -45,7 +44,7 @@ public class DataNodeManager {
 	}
 	
 	public synchronized void deleteBlock(String block) {
-		//System.out.println("datanodeMNGR.deleteBlock");
+		
 		String[] division = block.split("/");
 		String id = division[division.length - 1];
 		String body = block.substring(0, block.length() - id.length() -1);

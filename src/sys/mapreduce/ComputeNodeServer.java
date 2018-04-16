@@ -17,7 +17,6 @@ public class ComputeNodeServer implements ComputeNode{
 	@Override
 	public void mapReduce(String jobClassBlob, String inputPrefix, String outputPrefix, int outPartSize)
 			throws InvalidArgumentException {
-		System.out.println("mapReduce called");
 		if (jobClassBlob == null || inputPrefix == null || outputPrefix == null)
 			throw new InvalidArgumentException();
 
@@ -31,14 +30,11 @@ public class ComputeNodeServer implements ComputeNode{
 
 	public static void main(String[] args ) {
 		try{
-			System.out.println("bbbbbbb");
 			String host = Inet4Address.getLocalHost().getHostAddress();
 			String URI_BASE = "http://" + host + ":" + 6666 + ComputeNode.PATH;
-			System.out.println("URI:"+ URI_BASE);
 			Endpoint.publish(URI_BASE , new ComputeNodeServer());
 			System.err.println("SOAP ComputeNodeServer Server ready...");
 		}catch (Exception e) {
-			System.out.println("Error on thread main - ComputerNodeServer");
 
 		}	
 	}

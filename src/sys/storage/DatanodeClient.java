@@ -28,10 +28,10 @@ public class DatanodeClient implements Datanode {
 	public DatanodeClient (String id) {
 		try {
 			this.baseURI = new URI(id);
-			System.out.println("baseURI: " + baseURI.toString());
+			
 			target = client.target( baseURI );
 		} catch (URISyntaxException e) {
-			System.out.println("ERROR2");
+			
 			e.printStackTrace();
 		}
 	}
@@ -42,26 +42,23 @@ public class DatanodeClient implements Datanode {
 		Response response = target.path("/datanode") 
 				.request()
 			    .post(Entity.entity(data, MediaType.APPLICATION_OCTET_STREAM));
-		System.out.println("create: " + response.getStatus());
-		System.out.println("data: " + data.toString());
-		System.out.println("uri: " + target.getUri().toString());
+
 		return response.readEntity(String.class);
 	}
 	public void deleteBlock(String block) {
 		Response response = target.path("/" + block)
 				.request()
 				.delete();
-		System.out.println("delete: " + response.getStatus());
+		
 	}
 
 	@Override
 	public byte[] readBlock(String block) {
-		System.out.println("going to call" + block);
+		
 		Response response = target.path("/datanode/" + block)
 				.request()
 				.get();
-		System.out.println("block: " + block + ";");
-		System.out.println("read: " + block + " - "+ response.getStatus());
+		
 		return response.readEntity(byte[].class);
 		
 	}

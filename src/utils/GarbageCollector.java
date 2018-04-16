@@ -37,7 +37,7 @@ public class GarbageCollector {
 							clientSocket.receive(msgPacket);
 
 							String asking = new String (msgPacket.getData());
-							System.out.println(asking);
+					
 							if (asking.trim().equals(id)) {
 
 								String host = String.valueOf(version) + " " + // (version) (uri)
@@ -48,18 +48,16 @@ public class GarbageCollector {
 								if(isRoot) {
 									host += " root";
 								}
-								System.out.println("Sending " + host);
-								//host += path;
+								
 								byte[] responseData = host.getBytes();
-								//System.out.println("my response " + host);
+								
 								DatagramPacket response = new DatagramPacket(responseData, responseData.length,msgPacket.getSocketAddress()) ;
 
-								//System.out.println("source "+ msgPacket.getSocketAddress());
-
+								
 								DatagramSocket uniSocket = new DatagramSocket();
 
 								uniSocket.send(response);
-								//uniSocket.close();
+								
 							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -70,14 +68,14 @@ public class GarbageCollector {
 				}
 			}.start();
 		}catch(Exception e) {
-			System.out.println("Error on report");
+			
 		}
 
 
 	}
 
 	private static String findLatest(String id) {
-		System.out.println("into findLatest");
+		
 		byte[] requestData = id.getBytes();
 		try(DatagramSocket socket = new DatagramSocket()) {
 			DatagramPacket request = new DatagramPacket( requestData, requestData.length,InetAddress.getByName("226.226.226.226"),PORT) ;
@@ -90,11 +88,10 @@ public class GarbageCollector {
 						byte[] reply = new byte[100];
 						DatagramPacket response = new DatagramPacket( reply,reply.length) ;
 						socket.receive(response);
-						System.out.println("got List: " + new String(response.getData()).trim());
+						
 						long version = Long.valueOf((new String(response.getData()).split(" ")[0]));
 						if(version > max || (version == max && message.contains("root"))) {// preference for non-root
 							message = new String(response.getData());
-							System.out.println("GC: found " + message);
 							max = version;
 						}
 					}catch(SocketTimeoutException e) {
@@ -102,17 +99,16 @@ public class GarbageCollector {
 					}
 				}
 				socket.close();
-				System.out.println("message " + message);
+	
 				return message;
 		} catch (Exception e) {
-			System.out.println("Error getting latest");
+		
 
 		}
 		return null;
 	}
 
 	public static int findLatestVersion(String id) {
-		System.out.println( findLatest(id).trim().split(" ")[0] );
 		return Integer.valueOf(findLatest(id).trim().split(" ")[0]);
 	}
 
