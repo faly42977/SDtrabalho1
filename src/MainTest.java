@@ -18,7 +18,6 @@ public class MainTest {
 		String host;
 		try {
 			host = Inet4Address.getLocalHost().getHostAddress();
-			System.out.println("host: " + host);
 		} catch (UnknownHostException e) {
 			System.err.println("Cant obtain address");
 			return;

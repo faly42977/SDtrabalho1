@@ -53,26 +53,23 @@ public class DataNodeManager {
 	}
 	
 	public synchronized byte[] readBlock(String block) {
-		//System.out.println("datanodeMNGR.readBlock");
+		
 		String[] division = block.split("/");
 		String id = division[division.length - 1];
 		String body = block.substring(0, block.length() - id.length() -1);
-		//System.out.println("body:" + body + ", id:" + id);
-		//System.out.println("block<:" + block);
-		//for (String key :datanodes.keySet())
-			//System.out.println(key);
+		
 		
 		
 		return datanodes.get(body).readBlock(id);
 	}
 	
 	public synchronized void addDataNode(String nodeId) {
-		//System.out.println("datanodeMNGR.addDataNode");
+		
 		datanodes.putIfAbsent(nodeId+"datanode", new DatanodeClient(nodeId));
 	}
 	
 	public synchronized  void updateDataNodes() {
-		//System.out.println("datanodeMNGR.updateDataNodes");
+		
 		for ( String nodeId : DiscoveryMulticast.findEvery("Datanode")){
 			if (!datanodes.containsKey(nodeId) ) {
 				addDataNode(nodeId);
